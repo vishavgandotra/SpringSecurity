@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="layouts::header"></head>
+	<nav th:replace="layouts::navbar"></nav>
+	
+	<body>
+		<div class="container mt-4 col-6">
+			<div class="form-group row">
+			    <label for="firstName" class="col-4 col-form-label">First name</label>
+			     <div class="col-6">
+			    	<input type="text"   readonly class="form-control-plaintext" id="firstName" >
+		    	</div>
+		  </div>
+		  <div class="form-group row">
+		    <label for="lastName" class="col-4 col-form-label">Last Name</label>
+		     <div class="col-6">
+		   		 <input type="text"  readonly class="form-control-plaintext" id="lastName"  >
+	   		 </div>
+		  </div>
+		  <div class="form-group row">
+		    <label for="email" class="col-4 col-form-label">Email</label>
+		 	 <div class="col-6">
+		   		 <input type="email"  readonly class="form-control-plaintext" id="email" >
+	   		 </div>
+		  </div>	
+		  
+    	<div class="form-group row">
+		    <label for="userName"  class="col-4 col-form-label">Username</label>
+		  	 <div class="col-6">
+		  	  	<input type="text"  readonly class="form-control-plaintext" id="userName" >
+	  	 	 </div>
+		  </div>
+		  
+		  <div class="form-group row">
+		    <label for="roles"  class="col-4 col-form-label">Roles</label>
+		  	 <div class="col-6">
+		  	  	<input type="text"  readonly class="form-control-plaintext" id="roles" >
+	  	 	 </div>
+		  </div>
+		  
+		  <div class="form-group row d-none" id="passwordDiv">
+		    <label for="password"  class="col-4 col-form-label">Password</label>
+		  	 <div class="col-6">
+		  	  	<input type="password"   class="form-control" id="password" >
+	  	 	 </div>
+		  </div>
+		  
+			  <div class="row">
+				  <div class="mt-4 mb-4 col-5 changepassword">
+					<a class="btn btn-primary btn-block" onclick="changePassowrd()">Change password</a>
+				</div>
+				
+				<div class="mt-4 mb-4 col-5 updatepassword d-none">
+					<a class="btn btn-primary btn-block" onclick="updatePassowrd()">Update</a>
+				</div>
+				
+<!-- 				  <div class="mt-4 mb-4 col-4"> -->
+<!-- 					<a class="btn btn-secondary btn-block" >Update</a> -->
+<!-- 				</div> -->
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		$(document).ready(renderEmp());	
+	
+		function renderEmp(){
+		
+			$.ajax({
+				url: "/rest/employees/profile",
+				success: function(employee){
+					if(employee && employee.employees[0].id > 0){
+						 $("#firstName").val(employee.employees[0].firstName),
+						 $("#lastName").val(employee.employees[0].lastName),
+						 $("#email").val(employee.employees[0].email),
+						 $("#userName").val(employee.employees[0].userName),
+						 $("#roles").val(employee.employees[0].roles)
+					}
+				}
+			});
+		}
+		
+		function changePassowrd(){
+			$("#passwordDiv, .updatepassword").removeClass("d-none");
+			$(".changepassword").addClass('d-none');
+		}
+		
+		function updatePassowrd(){
+			$.ajax({
+				url: "/rest/employees",
+				type: "put",
+				dataType: "json",
+				contentType: "application/json",
+				data: JSON.stringify({
+					firstName: $("#firstName").val(),
+					lastName: $("#lastName").val(),
+					email: $("#email").val(),
+					userName: $("#userName").val(),
+					password: $("#password").val(),
+					roles: $("#roles").val(),
+				}),
+				success: function(status){
+					alert("password updated");
+					window.location.href="/profile";
+				}
+			});
+		}
+	</script>
+</html>
