@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="layouts::header"></head>
+	<nav th:replace="layouts::navbar"></nav>
+	
+	<body>
+	<div class="container mt-4">
+	<form method="get" th:action="@{/newEmployee}">
+		<button type="submit" class="btn btn-primary" >Add Employee</button>
+	</form>
+		<table class="table table-striped mt-4">
+			<thead class="thead-dark">
+				<tr>
+					<th>Username</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Email</th>
+					<th>Roles</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody id="employeesList">
+				
+			</tbody>
+		</table>
+	</div>
+		
+	</body>
+	
+	<script type="text/javascript">
+		$(document).ready(renderEmp());	
+		function renderEmp(){
+			$.ajax({
+				url: "/rest/employees",
+				
+			}).then(function(employeesJson){
+				var employees = employeesJson && employeesJson.employees
+									? employeesJson.employees
+									: new Array();
+				var tbody = $("#employeesList");
+				for(var i=0; i<employees.length; i++){
+					var employee = employees[i];
+					var firstName = employee.firstName;
+					var id = employee.id;
+					var lastName = employee.lastName;
+					var email = employee.email;
+					var roles = employee.roles;
+					var userName = employee.userName;
+					var isLoggedInUser = "[[${username}]]" == userName;
+
+					
+					var tr = $("<tr></tr>");
+					tbody.append(tr);
+					
+					var td = $("<td></td>");
+					tr.append(td);
+					td.text(userName);
+					
+					td = $("<td></td>");
+					tr.append(td);
+					td.text(firstName);
+					
+					td = $("<td></td>");
+					tr.append(td);
+					td.text(lastName);
+					
+					td = $("<td></td>");
+					tr.append(td);
+					td.text(email);
+					
+					td = $("<td></td>");
+					tr.append(td);
+					td.text(roles);
+					
+					td = $("<td></td>");
+					tr.append(td);
+					if(!isLoggedInUser)
+					{						
+						td.html("<div class='container'><a class='btn btn-link'  onclick='deleteEmployee("+id+")'>Delete</a> <!-- <a class='btn btn-link' onclick='updateEmployee("+id+")'>Update</a>-->  </div>");
+					
+					}
+				}
+			});		
+		}
+		function deleteEmployee(id){
+			$.ajax({
+				url: "/rest/employees/"+id,
+				type: "delete",
+				success: function(status){
+					if(status && status.success){
+						$("#employeesList").html("");
+						renderEmp();
+					}
+				}
+				
+			});
+		}
+		
+		function updateEmployee(id){
+			window.location.href="/update";
+		}
+	</script>
+</html>

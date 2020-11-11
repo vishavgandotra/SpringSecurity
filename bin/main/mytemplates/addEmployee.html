@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="layouts::header"></head>
+	<nav th:replace="layouts::navbar"></nav>
+	
+	<body>
+		<div class="container mt-4 col-6">
+		  <div class="form-group">
+		    <label for="firstName">First name</label>
+		    <input type="text" class="form-control" id="firstName" >
+		  </div>
+		  <div class="form-group">
+		    <label for="lastName">Last Name</label>
+		    <input type="text" class="form-control" id="lastName"  >
+		  </div>
+		  <div class="form-group">
+		    <label for="email">Email</label>
+		    <input type="email" class="form-control" id="email" >
+		  </div>	
+		   <div class="form-group">
+		    <label for="userName">Username</label>
+		    <input type="text" class="form-control" id="userName"  >
+		  </div>
+		  <div class="form-group">
+		    <label for="password">Password</label>
+		    <input type="password" class="form-control" id="password"  >
+		  </div>
+		  <div class="form-group">
+		   <label for="roles">Choose roles:</label>
+		  	<select name="roles" id="roles" multiple class="form-control">
+		    	<option value="ADMIN">ADMIN</option>
+		    	<option value="USER">USER</option>
+		    </select>	
+	    </div>
+		<div class="mt-4 mb-4 col-4">
+			<a class="btn btn-primary btn-block" onclick="addEmployee()">Add employee</a>
+		</div>
+	</div>
+		
+	</body>
+	<script type="text/javascript">
+		function addEmployee(){debugger;
+			$.ajax({
+				url: "/rest/employees",
+				type: "post",
+				dataType: "json",
+				contentType: "application/json",
+				data: JSON.stringify({
+					firstName: $("#firstName").val(),
+					lastName: $("#lastName").val(),
+					email: $("#email").val(),
+					userName: $("#userName").val(),
+					password: $("#password").val(),
+					roles: $("#roles").val(),
+				}),
+				success: function(employee){
+					if(employee && employee.employees[0].id >= 1){
+						window.location.href="/employees";
+					}
+				},
+				error: function(status){
+					debugger;
+				}
+			});
+		}
+	</script>
+</html>
